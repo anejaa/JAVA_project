@@ -18,4 +18,26 @@ public class ApiClient {
         HttpResponse<String> res = client.send(req, HttpResponse.BodyHandlers.ofString());
         return res.body();
     }
+
+    public static String doPutRequest(String uri, String data) throws IOException, InterruptedException {
+        HttpRequest req = HttpRequest.newBuilder()
+                .PUT(HttpRequest.BodyPublishers.ofString(data))
+                .uri(URI.create(uri))
+                .header("Content-Type", "application/json")
+                .build();
+
+        HttpResponse<String> res = client.send(req, HttpResponse.BodyHandlers.ofString());
+        return res.body();
+    }
+
+    public static String doDeleteRequest(String uri) throws IOException, InterruptedException {
+        HttpRequest req = HttpRequest.newBuilder()
+                .DELETE()
+                .uri(URI.create(uri))
+                .build();
+
+        HttpResponse<String> res = client.send(req, HttpResponse.BodyHandlers.ofString());
+        return res.body();
+    }
+
 }

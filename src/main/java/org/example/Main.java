@@ -1,5 +1,7 @@
 package org.example;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -7,10 +9,11 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int option;
-        
+
         do {
             menu();
             option = scanner.nextInt();
+            scanner.nextLine();
 
             switch (option) {
                 case 1:
@@ -37,6 +40,7 @@ public class Main {
         do {
             displayOptions(type);
             option = scanner.nextInt();
+            scanner.nextLine();
 
             switch (option) {
                 case 1:
@@ -45,13 +49,20 @@ public class Main {
                 case 2:
                     System.out.print("Enter " + type + " id: ");
                     int id = scanner.nextInt();
+                    scanner.nextLine();
                     show(type, id);
                     break;
                 case 3:
-
+                    System.out.println("Enter " + type + " id: ");
+                    int editId = scanner.nextInt();
+                    scanner.nextLine();
+                    edit(editId);
                     break;
                 case 4:
-
+                    System.out.print("Enter " + type + " id to delete: ");
+                    int deleteId = scanner.nextInt();
+                    scanner.nextLine();
+                    delete(type, deleteId);
                     break;
                 case 5:
                     System.out.println("Returning to main menu...");
@@ -64,13 +75,38 @@ public class Main {
 
     }
 
+    private static void delete(String type, int id) {
+        String uri = "https://dummyjson.com/" + type + "s/" + id;
+        try {
+            String response = ApiClient.doDeleteRequest(uri);
+            System.out.println("Deleted " + type + " with id " + id + ": " + response);
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Sorry, there was an error deleting the " + type + ". Please try again later.");
+        }
+    }
+
+    private static void edit(int id) {
+
+    }
+
     private static void show(String type, int id) {
         String uri = "https://dummyjson.com/" + type + "s/" + id;
         try {
             String res = ApiClient.doGetRequest(uri);
-            System.out.println(res);
+            Gson gson = new Gson();
+            if (type.equals("user")) {
+                User user = gson.fromJson(res, User.class);
+                System.out.println(user.toString());
+            } else if (type.equals("cart")) {
+                Cart cart = gson.fromJson(res, Cart.class);
+                System.out.println(cart.toString());
+            } else if (type.equals("product")) {
+                Product product = gson.fromJson(res, Product.class);
+                System.out.println(product.toString());
+            }
+
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Sorry, there was an error retrieving the data. Please try again later.");
         }
     }
 
@@ -80,7 +116,7 @@ public class Main {
             String response = ApiClient.doGetRequest(uri);
             System.out.println(response);
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Sorry, there was an error retrieving the data. Please try again later.");
         }
     }
 
