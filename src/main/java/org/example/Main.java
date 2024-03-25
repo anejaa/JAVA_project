@@ -3,6 +3,7 @@ package org.example;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -12,26 +13,32 @@ public class Main {
 
         do {
             menu();
-            option = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (option) {
-                case 1:
-                    handleMenuOption(scanner, "user");
-                    break;
-                case 2:
-                    handleMenuOption(scanner, "cart");
-                    break;
-                case 3:
-                    handleMenuOption(scanner, "product");
-                    break;
-                case 4:
-                    System.out.println("Finishing program.");
-                    break;
-                default:
-                    System.out.println("Wrong option. Try again");
+            try {
+                option = scanner.nextInt();
+                scanner.nextLine();
+                switch (option) {
+                    case 1:
+                        handleMenuOption(scanner, "user");
+                        break;
+                    case 2:
+                        handleMenuOption(scanner, "cart");
+                        break;
+                    case 3:
+                        handleMenuOption(scanner, "product");
+                        break;
+                    case 4:
+                        System.out.println("Finishing program.");
+                        break;
+                    default:
+                        System.out.println("Wrong option. Try again");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.nextLine();
+                option = 0;
             }
         } while (option != 4);
+
         scanner.close();
     }
 
@@ -39,51 +46,56 @@ public class Main {
         int option;
         do {
             displayOptions(type);
-            option = scanner.nextInt();
-            scanner.nextLine();
+            try {
+                option = scanner.nextInt();
+                scanner.nextLine();
 
-            switch (option) {
-                case 1:
-                    displayAll(type);
-                    break;
-                case 2:
-                    System.out.print("Enter " + type + " id: ");
-                    int id = scanner.nextInt();
-                    scanner.nextLine();
-                    show(type, id);
-                    break;
-                case 3:
-                    System.out.println("Enter " + type + " id: ");
-                    int editId = scanner.nextInt();
-                    scanner.nextLine();
-                    show(type, editId);
-                    System.out.println("Type property you want to edit: ");
-                    String key = scanner.nextLine();
-                    System.out.println("New value:");
-                    String value = scanner.nextLine();
-                    edit(type, editId, key, value);
-                    break;
-                case 4:
-                    System.out.print("Enter " + type + " id to delete: ");
-                    int deleteId = scanner.nextInt();
-                    scanner.nextLine();
-                    delete(type, deleteId);
-                    break;
-                case 5:
-                    add(scanner, type);
-                    break;
-                case 6:
-                    System.out.println("Returning to main menu...");
-                    break;
-                default:
-                    System.out.println("Invalid option, please try again.");
-                    break;
+                switch (option) {
+                    case 1:
+                        displayAll(type);
+                        break;
+                    case 2:
+                        System.out.print("Enter " + type + " id: ");
+                        int id = scanner.nextInt();
+                        scanner.nextLine();
+                        show(type, id);
+                        break;
+                    case 3:
+                        System.out.println("Enter " + type + " id: ");
+                        int editId = scanner.nextInt();
+                        scanner.nextLine();
+                        show(type, editId);
+                        System.out.println("Type property you want to edit: ");
+                        String key = scanner.nextLine();
+                        System.out.println("New value:");
+                        String value = scanner.nextLine();
+                        edit(type, editId, key, value);
+                        break;
+                    case 4:
+                        System.out.print("Enter " + type + " id to delete: ");
+                        int deleteId = scanner.nextInt();
+                        scanner.nextLine();
+                        delete(type, deleteId);
+                        break;
+                    case 5:
+                        add(scanner, type);
+                        break;
+                    case 6:
+                        System.out.println("Returning to main menu...");
+                        break;
+                    default:
+                        System.out.println("Invalid option, please try again.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.nextLine();
+                option = 0;
             }
         } while (option != 6);
 
     }
 
-    private static void add(Scanner scanner,String type) {
+    private static void add(Scanner scanner, String type) {
         String uri = "https://dummyjson.com/" + type + "s/add";
         String data = "";
         if(type.equals("user")) {
@@ -95,7 +107,7 @@ public class Main {
         }
 
         try {
-            String response = ApiClient.doPostRequest(uri,data);
+            String response = ApiClient.doPostRequest(uri, data);
             System.out.println(response);
         } catch (IOException | InterruptedException e) {
             System.out.println("Sorry, there was an error adding " + type + ". Please try again later.");
@@ -105,16 +117,39 @@ public class Main {
     private static String addCart(Scanner scanner) {
         Cart cart = new Cart();
         System.out.println("Enter user id for the cart:");
-        int userId = scanner.nextInt();
-        scanner.nextLine();
+        int userId;
+        while (true) {
+            try {
+                userId = Integer.parseInt(scanner.nextLine());
+                if (userId <= 0) {
+                    System.out.println("Invalid user ID. Please enter a positive integer:");
+                    continue;
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number for user ID:");
+            }
+        }
         cart.setUserId(userId);
 
         Gson gson = new Gson();
         boolean addMore = true;
         while(addMore) {
             System.out.println("Enter product ID:");
-            int productId = scanner.nextInt();
-            scanner.nextLine();
+            int productId;
+
+            while (true) {
+                try {
+                    productId = Integer.parseInt(scanner.nextLine());
+                    if (productId <= 0) {
+                        System.out.println("Invalid product ID. Please enter a positive integer:");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a valid integer for product ID:");
+                }
+            }
 
             String uri = "https://dummyjson.com/products/" + productId;
             Product product = null;
@@ -129,8 +164,20 @@ public class Main {
 
             if (product != null) {
                 System.out.println("Enter quantity:");
-                int quantity = scanner.nextInt();
-                scanner.nextLine();
+                int quantity;
+
+                while (true) {
+                    try {
+                        quantity = Integer.parseInt(scanner.nextLine());
+                        if (quantity <= 0) {
+                            System.out.println("Invalid quantity. Please enter a positive integer:");
+                            continue;
+                        }
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Please enter a valid integer for quantity:");
+                    }
+                }
 
                 CartItem cartItem = new CartItem(product,quantity);
                 cart.addItem(cartItem);
@@ -139,8 +186,16 @@ public class Main {
             }
 
             System.out.println("Add more products? (yes/no):");
-            String response = scanner.nextLine();
-            addMore = response.equalsIgnoreCase("yes");
+            String response;
+            while (true) {
+                response = scanner.nextLine().toLowerCase();
+                if (!response.equals("yes") && !response.equals("no")) {
+                    System.out.println("Invalid response. Please enter 'yes' or 'no':");
+                    continue;
+                }
+                break;
+            }
+            addMore = response.equals("yes");
         }
 
         return gson.toJson(cart);
@@ -148,43 +203,110 @@ public class Main {
 
     private static String addProduct(Scanner scanner) {
         Product product = new Product();
+        Gson gson = new Gson();
 
         System.out.println("Enter title:");
-        String title = scanner.nextLine();
+        String title = "";
+        while (title.isEmpty()) {
+            title = scanner.nextLine().trim();
+            if (title.isEmpty()) {
+                System.out.println("Title cannot be empty. Please enter a valid title:");
+            }
+        }
         product.setTitle(title);
 
         System.out.println("Enter description:");
-        String description = scanner.nextLine();
-        product.setDescription(description);
+        String description ="";
+        while (description.isEmpty()) {
+            description = scanner.nextLine().trim();
+            if (description.isEmpty()) {
+                System.out.println("Title cannot be empty. Please enter a valid title:");
+            }
+        }
 
         System.out.println("Enter price:");
-        double price = scanner.nextDouble();
+        double price = 0.0;
+        while (price <= 0.0) {
+            try {
+                price = scanner.nextDouble();
+                if (price <= 0.0) {
+                    System.out.println("Price must be a positive number. Please enter a valid price:");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid price:");
+                scanner.nextLine();
+            }
+        }
         product.setPrice(price);
 
         System.out.println("Enter discount percentage:");
-        double discountPercentage = scanner.nextDouble();
+        double discountPercentage = -1.0;
+        while (discountPercentage < 0.0 || discountPercentage > 100.0) {
+            try {
+                discountPercentage = scanner.nextDouble();
+                if (discountPercentage < 0.0 || discountPercentage > 100.0) {
+                    System.out.println("Discount percentage must be between 0 and 100. Please enter a valid discount percentage:");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid discount percentage:");
+                scanner.nextLine();
+            }
+        }
         product.setDiscountPercentage(discountPercentage);
 
         System.out.println("Enter rating:");
-        double rating = scanner.nextDouble();
+        double rating = -1.0;
+        while (rating < 0.0 || rating > 5.0) {
+            try {
+                rating = scanner.nextDouble();
+                if (rating < 0.0 || rating > 5.0) {
+                    System.out.println("Rating must be between 0 and 5. Please enter a valid rating:");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid rating:");
+                scanner.nextLine(); // Clear the invalid input from the scanner
+            }
+        }
         product.setRating(rating);
 
         System.out.println("Enter stock:");
-        int stock = scanner.nextInt();
+        int stock = 0;
+        while (stock <= 0) {
+            try {
+                stock = scanner.nextInt();
+                if (stock <= 0) {
+                    System.out.println("Stock must be a positive integer. Please enter a valid stock:");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid stock:");
+                scanner.nextLine(); // Clear the invalid input from the scanner
+            }
+        }
         product.setStock(stock);
 
         System.out.println("Enter brand:");
-        String brand = scanner.nextLine();
-        scanner.nextLine();
+        String brand = "";
+        while (brand.isEmpty()) {
+            brand = scanner.nextLine().trim();
+            if (brand.isEmpty()) {
+                System.out.println("Brand cannot be empty. Please enter a valid brand:");
+            }
+        }
         product.setBrand(brand);
 
         System.out.println("Enter category:");
-        String category = scanner.nextLine();
+        String category = "";
+        while (category.isEmpty()) {
+            category = scanner.nextLine().trim();
+            if (category.isEmpty()) {
+                System.out.println("Category cannot be empty. Please enter a valid category:");
+            }
+        }
         product.setCategory(category);
 
-        Gson gson = new Gson();
         return gson.toJson(product);
     }
+
 
 
     private static String addUser(Scanner scanner) {
