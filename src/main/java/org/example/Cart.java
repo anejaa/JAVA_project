@@ -1,41 +1,46 @@
 package org.example;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Cart {
+public class Cart{
     private int id;
+    private int userId;
     private List<CartItem> products;
+    private double total;
+    private double discountedTotal;
+    private int totalQuantity;
 
-    public int getId() {
-        return id;
+    public Cart() {
+        this.products = new ArrayList<>();
+        this.total = 0.0;
+        this.discountedTotal = 0.0;
+        this.totalQuantity = 0;
     }
 
-    public List<CartItem> getProducts() {
-        return products;
-    }
+    private void recalculateTotals() {
+        total = 0.0;
+        discountedTotal = 0.0;
+        totalQuantity = 0;
 
-    public void setProducts(List<CartItem> products) {
-        this.products = products;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("Cart: \n");
-        sb.append("id=").append(id);
-        sb.append(", products=");
-        if (products == null) {
-            sb.append("null");
-        } else {
-            sb.append('[');
-            for (int i = 0; i < products.size(); i++) {
-                sb.append(products.get(i).toString());
-                if (i < products.size() - 1) {
-                    sb.append(", ");
-                }
-            }
-            sb.append(']');
+        for (CartItem product : products) {
+            total += product.getTotal();
+            discountedTotal += product.getDiscountedPrice();
+            totalQuantity += product.getQuantity();
         }
-        return sb.toString();
+    }
+
+    public void addItem(CartItem item) {
+        this.products.add(item);
+        recalculateTotals();
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
 

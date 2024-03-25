@@ -9,10 +9,6 @@ public class User {
     private String gender;
     private String email;
     private String phone;
-    private String username;
-    private String password;
-    private String birthDate;
-    private String image;
 
     public int getId() {
         return id;
@@ -74,37 +70,6 @@ public class User {
         this.phone = phone;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
     @Override
     public String toString() {
         return "User:" + '\n' +
@@ -115,10 +80,6 @@ public class User {
                 ", age=" + age +
                 ", gender='" + gender + '\'' +
                 ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                ", image='" + image + "'\n";
+                ", phone='" + phone + "'\n";
     }
 }
