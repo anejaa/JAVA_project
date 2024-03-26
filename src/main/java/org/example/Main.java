@@ -64,10 +64,14 @@ public class Main {
                         displayAll(type);
                         break;
                     case 2:
-                        System.out.print("Enter " + type + " id: ");
-                        int id = scanner.nextInt();
-                        scanner.nextLine();
-                        show(type, id);
+                        if(type.equals("cart")) {
+                            System.out.println("Enter id of cart: ");
+                        } else {
+                            System.out.println("Enter search query for " + type + ": ");
+                        }
+
+                        String searchQuery = scanner.nextLine();
+                        search(searchQuery, type);
                         break;
                     case 3:
                         System.out.println("Enter " + type + " id: ");
@@ -102,6 +106,21 @@ public class Main {
             }
         } while (option != 6);
 
+    }
+
+    private static void search(String searchQuery, String type) {
+        String uri;
+        if(type.equals("cart")) {
+            uri = "https://dummyjson.com/" + type + "s/" + searchQuery;
+        } else {
+            uri = "https://dummyjson.com/" + type + "s/search?q=" + searchQuery;
+        }
+        try {
+            String response = ApiClient.doGetRequest(uri);
+            System.out.println("Search results: " + response);
+        } catch (IOException | InterruptedException e) {
+            System.out.println("There was an error performing the search: " + e.getMessage());
+        }
     }
 
     private static void add(Scanner scanner, String type) {
@@ -384,7 +403,6 @@ public class Main {
                 User user = gson.fromJson(res, User.class);
                 System.out.println(user.toString());
             } else if (type.equals("cart")) {
-                //Cart cart = gson.fromJson(res, Cart.class);
                 System.out.println(res);
             } else if (type.equals("product")) {
                 Product product = gson.fromJson(res, Product.class);
@@ -409,7 +427,7 @@ public class Main {
     private static void displayOptions(String type) {
         System.out.println("Select Menu");
         System.out.println("1. All " + type + "s");
-        System.out.println("2. Find " + type);
+        System.out.println("2. Search " + type);
         System.out.println("3. Edit "+ type);
         System.out.println("4. Delete " + type);
         System.out.println("5. Add " + type);
