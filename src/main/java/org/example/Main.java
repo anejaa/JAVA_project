@@ -27,6 +27,15 @@ public class Main {
                         handleMenuOption(scanner, "product");
                         break;
                     case 4:
+                        String imageUrl = "https://images.unsplash.com/photo-1710874087896-6683c258deb4?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+                        String destinationFile = "C:\\Users\\aneja\\OneDrive\\Pictures\\savedImage.jpg";
+
+                        try {
+                            ImageHandler.saveImageFromURL(imageUrl, destinationFile);
+                        } catch (Exception e) {
+                            System.out.println("There was an error saving the image: " + e.getMessage());
+                        }
+                    case 5:
                         System.out.println("Finishing program.");
                         break;
                     default:
@@ -37,7 +46,7 @@ public class Main {
                 scanner.nextLine();
                 option = 0;
             }
-        } while (option != 4);
+        } while (option != 5);
 
         scanner.close();
     }
@@ -413,7 +422,8 @@ public class Main {
         System.out.println("1. Users");
         System.out.println("2. Carts");
         System.out.println("3. Products");
-        System.out.println("4. Exit");
+        System.out.println("4. Save Image");
+        System.out.println("5. Exit");
         System.out.print("Select option: ");
     }
 }
