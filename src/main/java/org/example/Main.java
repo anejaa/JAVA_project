@@ -28,7 +28,7 @@ public class Main {
                         break;
                     case 4:
                         String imageUrl = "https://images.unsplash.com/photo-1710874087896-6683c258deb4?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-                        String destinationFile = "C:\\Users\\aneja\\OneDrive\\Pictures\\savedImage.jpg";
+                        String destinationFile = "savedImage.jpg";
 
                         try {
                             ImageHandler.saveImageFromURL(imageUrl, destinationFile);
