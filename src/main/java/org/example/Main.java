@@ -35,6 +35,7 @@ public class Main {
                         } catch (Exception e) {
                             System.out.println("There was an error saving the image: " + e.getMessage());
                         }
+                        break;
                     case 5:
                         System.out.println("Finishing program.");
                         break;
@@ -154,9 +155,14 @@ public class Main {
 
     private static void edit(String type, int id, String key, String value) {
         String uri = "https://dummyjson.com/" + type + "s/" + id;
-        String jsonData = String.format("{\"%s\":\"%s\"}", key, value);
+        String jsonData;
+        if(type.equals("cart")) {
+            jsonData = "{" + "\"" + key + "\"" + ":" + value + "}";
+        } else {
+            jsonData = String.format("{\"%s\":\"%s\"}", key, value);
+        }
         try {
-            String response = ApiClient.doPutRequest(uri, jsonData);
+            String response = ApiClient.doPatchRequest(uri, jsonData);
             System.out.println(response);
         } catch (IOException | InterruptedException e) {
             System.out.println("Sorry, there was an error updating the " + type + ". Please try again later.");
@@ -167,16 +173,7 @@ public class Main {
         String uri = "https://dummyjson.com/" + type + "s/" + id;
         try {
             String res = ApiClient.doGetRequest(uri);
-            Gson gson = new Gson();
-            if (type.equals("user")) {
-                User user = gson.fromJson(res, User.class);
-                System.out.println(user.toString());
-            } else if (type.equals("cart")) {
-                System.out.println(res);
-            } else if (type.equals("product")) {
-                Product product = gson.fromJson(res, Product.class);
-                System.out.println(product.toString());
-            }
+            System.out.println(res);
 
         } catch (IOException | InterruptedException e) {
             System.out.println("Sorry, there was an error retrieving the data. Please try again later.");

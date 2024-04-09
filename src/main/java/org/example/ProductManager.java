@@ -25,9 +25,10 @@ public class ProductManager {
         while (description.isEmpty()) {
             description = scanner.nextLine().trim();
             if (description.isEmpty()) {
-                System.out.println("Title cannot be empty. Please enter a valid title:");
+                System.out.println("Description cannot be empty. Please enter a valid description:");
             }
         }
+        product.setDescription(description);
 
         System.out.println("Enter price:");
         double price = 0.0;

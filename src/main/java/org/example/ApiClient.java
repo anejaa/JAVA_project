@@ -51,4 +51,15 @@ public class ApiClient {
         return res.body();
     }
 
+    public static String doPatchRequest(String uri, String data) throws IOException, InterruptedException {
+        HttpRequest req = HttpRequest.newBuilder()
+                .method("PATCH", HttpRequest.BodyPublishers.ofString(data))
+                .uri(URI.create(uri))
+                .header("Content-Type", "application/json")
+                .build();
+
+        HttpResponse<String> res = client.send(req, HttpResponse.BodyHandlers.ofString());
+        return res.body();
+    }
+
 }
